@@ -23,7 +23,7 @@ jobs:
       - run: echo "Target is ${{ steps.target.outputs.target_branch }}"
       - name: Fetch target branch
         run: |
-          git fetch origin ${{ steps.target.outputs.branch }}
+          git fetch origin ${{ steps.target.outputs.target_branch }}
       - name: Get unique authors
         id: authors
         run: |
