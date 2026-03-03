@@ -13,6 +13,9 @@ jobs:
       pull-requests: write # Required to post comments and labels on PRs
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
       - id: target
         run: |
           if [ -n "$GITHUB_BASE_REF" ]; then
