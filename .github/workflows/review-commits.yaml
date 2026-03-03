@@ -27,7 +27,7 @@ jobs:
       - name: Get unique authors
         id: authors
         run: |
-          RANGE="origin/${{ steps.target.outputs.branch }}..HEAD"
+          RANGE="origin/${{ steps.target.outputs.target_branch }}..HEAD"
 
           echo "Checking range: $RANGE"
 
