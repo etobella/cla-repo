@@ -21,6 +21,9 @@ jobs:
             echo "target_branch=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
           fi
       - run: echo "Target is ${{ steps.target.outputs.target_branch }}"
+      - name: Fetch target branch
+        run: |
+          git fetch origin ${{ steps.target.outputs.branch }}
       - name: Get unique authors
         id: authors
         run: |
@@ -43,3 +46,4 @@ jobs:
       - name: Show authors
         run: |
           echo "${{ steps.authors.outputs.list }}"
+          
