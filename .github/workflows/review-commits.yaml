@@ -1,0 +1,45 @@
+name: "Review Commits authorship"
+
+on:
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # Required to post comments and labels on issues
+      pull-requests: write # Required to post comments and labels on PRs
+    steps:
+      - uses: actions/checkout@v4
+      - id: target
+        run: |
+          if [ -n "$GITHUB_BASE_REF" ]; then
+            echo "target_branch=$GITHUB_BASE_REF" >> "$GITHUB_OUTPUT"
+          else
+            echo "target_branch=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          fi
+      - run: echo "Target is ${{ steps.target.outputs.target_branch }}"
+      - name: Get unique authors
+        id: authors
+        run: |
+          RANGE="origin/${{ steps.target.outputs.branch }}..HEAD"
+
+          echo "Checking range: $RANGE"
+
+          AUTHORS=$(git log $RANGE --format='%aN <%aE>' | sort -u)
+
+          echo "Authors:"
+          echo "$AUTHORS"
+
+          # Optional: export as output (multiline-safe)
+          {
+            echo "list<<EOF"
+            echo "$AUTHORS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Show authors
+        run: |
+          echo "${{ steps.authors.outputs.list }}"
