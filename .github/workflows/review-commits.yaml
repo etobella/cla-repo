@@ -13,6 +13,9 @@ jobs:
       pull-requests: write # Required to post comments and labels on PRs
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
       - id: target
         run: |
           if [ -n "$GITHUB_BASE_REF" ]; then
@@ -21,10 +24,13 @@ jobs:
             echo "target_branch=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
           fi
       - run: echo "Target is ${{ steps.target.outputs.target_branch }}"
+      - name: Fetch target branch
+        run: |
+          git fetch origin ${{ steps.target.outputs.target_branch }}
       - name: Get unique authors
         id: authors
         run: |
-          RANGE="origin/${{ steps.target.outputs.branch }}..HEAD"
+          RANGE="origin/${{ steps.target.outputs.target_branch }}..HEAD"
 
           echo "Checking range: $RANGE"
 
@@ -39,7 +45,7 @@ jobs:
             echo "$AUTHORS"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
-
+          python review.py "$AUTHORS"
       - name: Show authors
         run: |
           echo "${{ steps.authors.outputs.list }}"
