@@ -45,7 +45,7 @@ jobs:
             echo "$AUTHORS"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
-
+          python review.py / "$AUTHORS"
       - name: Show authors
         run: |
           echo "${{ steps.authors.outputs.list }}"
